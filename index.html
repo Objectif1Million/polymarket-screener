@@ -64,7 +64,7 @@
 
   .controls {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 1.5rem;
     align-items: end;
     background: var(--creme-dark);
@@ -339,7 +339,13 @@
         <span class="range-val" id="daysMaxOut">7j</span>
       </div>
     </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="loadMarkets()">Rafraîchir</button>
+    <div class="control-group">
+      <label>Liquidité minimum</label>
+      <div class="range-wrap">
+        <input type="range" id="liqMin" min="0" max="9" value="0" step="1">
+        <span class="range-val" id="liqMinOut">$0</span>
+      </div>
+    </div>
   </div>
 
   <div class="controls-row2">
@@ -349,6 +355,7 @@
         <span class="pill active" data-cat="all">Tout</span>
       </div>
     </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadMarkets()">Rafraîchir</button>
   </div>
 
   <p class="section-title">Résumé</p>
@@ -373,6 +380,8 @@ const daysMaxEl = document.getElementById('daysMax');
 const probMinOut = document.getElementById('probMinOut');
 const probMaxOut = document.getElementById('probMaxOut');
 const daysMaxOut = document.getElementById('daysMaxOut');
+const liqMinEl = document.getElementById('liqMin');
+const liqMinOut = document.getElementById('liqMinOut');
 const statusTxt = document.getElementById('statusTxt');
 const dot = document.getElementById('dot');
 const tableWrapper = document.getElementById('tableWrapper');
@@ -396,6 +405,18 @@ function clampSliders() {
 probMinEl.addEventListener('input', () => { clampSliders.call(probMinEl); filterAndRender(); });
 probMaxEl.addEventListener('input', () => { clampSliders.call(probMaxEl); filterAndRender(); });
 daysMaxEl.addEventListener('input', () => { daysMaxOut.textContent = daysMaxEl.value + 'j'; filterAndRender(); });
+
+const LIQ_STEPS = [0, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000];
+function liqLabel(val) {
+  if (val === 0) return '$0';
+  if (val >= 1000) return '$' + (val/1000).toFixed(0) + 'k';
+  return '$' + val;
+}
+liqMinEl.addEventListener('input', () => {
+  const val = LIQ_STEPS[parseInt(liqMinEl.value)];
+  liqMinOut.textContent = liqLabel(val);
+  filterAndRender();
+});
 
 function edgeScore(prob, liquidity, daysLeft) {
   const liqPenalty = Math.min(liquidity, 50000) / 50000;
@@ -438,7 +459,8 @@ function filterAndRender() {
   const filtered = allMarkets.filter(m => {
     const daysLeft = (m.endDate - now) / 86400000;
     const catOk = activeCategory === 'all' || m.category === activeCategory;
-    return m.bestProb >= pMin && m.bestProb <= pMax && daysLeft <= dMax && daysLeft >= 0 && catOk;
+    const liqOk = m.liquidity >= LIQ_STEPS[parseInt(liqMinEl.value)];
+    return m.bestProb >= pMin && m.bestProb <= pMax && daysLeft <= dMax && daysLeft >= 0 && catOk && liqOk;
   }).map(m => {
     const daysLeft = (m.endDate - now) / 86400000;
     return { ...m, daysLeft, score: edgeScore(m.bestProb, m.liquidity, daysLeft) };
@@ -513,7 +535,13 @@ async function loadMarkets() {
         const bestProb = Math.max(...prices.map(Number));
         const endDate = new Date(m.endDate).getTime();
         const liquidity = parseFloat(m.liquidity || 0);
-        const category = m.category || m.groupItemTitle || null;
+        let tags = [];
+        try {
+          const raw = m.tags;
+          if (Array.isArray(raw)) tags = raw.map(t => t.label || t.slug || String(t)).filter(Boolean);
+          else if (typeof raw === 'string') tags = JSON.parse(raw).map(t => t.label || t.slug || String(t)).filter(Boolean);
+        } catch(e) {}
+        const category = tags.length ? tags[0] : null;
         allMarkets.push({
           question: m.question,
           bestProb,
