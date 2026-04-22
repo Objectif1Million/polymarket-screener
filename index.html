@@ -37,24 +37,8 @@
     gap: 0.5rem;
   }
 
-  .logo {
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-  }
-
+  .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
   .logo span { color: var(--orange); }
-
-  .logo-sub {
-    font-size: 0.7rem;
-    font-weight: 400;
-    color: var(--noir);
-    opacity: 0.5;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-left: 1rem;
-  }
 
   .header-tag {
     font-family: 'DM Mono', monospace;
@@ -80,19 +64,36 @@
 
   .controls {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 1fr auto;
     gap: 1.5rem;
     align-items: end;
     background: var(--creme-dark);
     border: 1.5px solid var(--noir);
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1px;
   }
 
-  @media (max-width: 640px) {
-    .controls { grid-template-columns: 1fr; }
+  .controls-row2 {
+    display: flex;
+    gap: 1.5rem;
+    align-items: end;
+    background: var(--creme-dark);
+    border: 1.5px solid var(--noir);
+    border-top: none;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .controls { grid-template-columns: 1fr 1fr; }
+    .controls-row2 { flex-direction: column; align-items: stretch; }
     header { padding: 1rem 1.25rem; }
     main { padding: 1.25rem; }
+  }
+
+  @media (max-width: 480px) {
+    .controls { grid-template-columns: 1fr; }
   }
 
   .control-group label {
@@ -105,11 +106,7 @@
     opacity: 0.6;
   }
 
-  .range-wrap {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+  .range-wrap { display: flex; align-items: center; gap: 1rem; }
 
   input[type="range"] {
     flex: 1;
@@ -150,11 +147,42 @@
     padding: 0.75rem 1.5rem;
     cursor: pointer;
     transition: transform 0.1s, background 0.15s;
+    white-space: nowrap;
   }
 
   .refresh-btn:hover { background: var(--noir); }
   .refresh-btn:active { transform: scale(0.97); }
   .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .cat-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    opacity: 0.6;
+    margin-bottom: 0.6rem;
+    white-space: nowrap;
+  }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .pill {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border: 1.5px solid var(--noir);
+    background: var(--creme);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .pill:hover { background: var(--creme-dark); }
+  .pill.active { background: var(--noir); color: var(--creme); }
 
   .stats-grid {
     display: grid;
@@ -167,10 +195,7 @@
 
   @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  .stat-card {
-    background: var(--creme);
-    padding: 1.25rem 1.5rem;
-  }
+  .stat-card { background: var(--creme); padding: 1.25rem 1.5rem; }
 
   .stat-label {
     font-size: 0.65rem;
@@ -181,13 +206,7 @@
     font-weight: 500;
   }
 
-  .stat-val {
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.03em;
-  }
-
+  .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
   .stat-val.accent { color: var(--orange); }
 
   .status-bar {
@@ -201,28 +220,14 @@
     gap: 0.5rem;
   }
 
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--orange);
-    animation: pulse 1.5s infinite;
-  }
-
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 1.5s infinite; }
   .dot.off { background: #aaa; animation: none; }
 
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1.5px solid var(--noir);
-  }
+  table { width: 100%; border-collapse: collapse; border: 1.5px solid var(--noir); }
 
-  thead tr {
-    background: var(--noir);
-    color: var(--creme);
-  }
+  thead tr { background: var(--noir); color: var(--creme); }
 
   thead th {
     padding: 0.75rem 1rem;
@@ -235,19 +240,10 @@
 
   thead th:not(:first-child) { text-align: center; }
 
-  tbody tr {
-    border-bottom: 1px solid var(--creme-dark);
-    transition: background 0.1s;
-  }
-
+  tbody tr { border-bottom: 1px solid var(--creme-dark); transition: background 0.1s; }
   tbody tr:hover { background: rgba(249,94,1,0.05); }
 
-  tbody td {
-    padding: 0.9rem 1rem;
-    font-size: 0.82rem;
-    vertical-align: middle;
-  }
-
+  tbody td { padding: 0.9rem 1rem; font-size: 0.82rem; vertical-align: middle; }
   tbody td:not(:first-child) { text-align: center; }
 
   .question-link {
@@ -257,27 +253,25 @@
     line-height: 1.4;
     transition: color 0.15s;
   }
-
   .question-link:hover { color: var(--bleu); }
 
-  .prob-val {
-    font-family: 'DM Mono', monospace;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-
+  .prob-val { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 0.9rem; }
   .prob-high { color: var(--orange); }
   .prob-mid { color: var(--noir); }
 
-  .days-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.82rem;
-  }
+  .days-val { font-family: 'DM Mono', monospace; font-size: 0.82rem; }
+  .liq-val { font-family: 'DM Mono', monospace; font-size: 0.82rem; opacity: 0.7; }
 
-  .liq-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.82rem;
-    opacity: 0.7;
+  .cat-chip {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: var(--creme-dark);
+    color: var(--noir);
+    white-space: nowrap;
   }
 
   .badge {
@@ -316,20 +310,26 @@
 <body>
 
 <header>
-  <div>
-    <span class="logo">Polymarket <span>Screener</span></span>
-  </div>
+  <span class="logo">Polymarket <span>Screener</span></span>
   <span class="header-tag">Beta — données live</span>
 </header>
 
 <main>
   <p class="section-title">Paramètres</p>
+
   <div class="controls">
     <div class="control-group">
       <label>Probabilité minimum</label>
       <div class="range-wrap">
-        <input type="range" id="probMin" min="80" max="99" value="90" step="1">
+        <input type="range" id="probMin" min="50" max="99" value="90" step="1">
         <span class="range-val" id="probMinOut">90%</span>
+      </div>
+    </div>
+    <div class="control-group">
+      <label>Probabilité maximum</label>
+      <div class="range-wrap">
+        <input type="range" id="probMax" min="51" max="100" value="100" step="1">
+        <span class="range-val" id="probMaxOut">100%</span>
       </div>
     </div>
     <div class="control-group">
@@ -340,6 +340,15 @@
       </div>
     </div>
     <button class="refresh-btn" id="refreshBtn" onclick="loadMarkets()">Rafraîchir</button>
+  </div>
+
+  <div class="controls-row2">
+    <div style="flex:1; min-width:200px;">
+      <p class="cat-label">Catégorie</p>
+      <div class="pills" id="pillsContainer">
+        <span class="pill active" data-cat="all">Tout</span>
+      </div>
+    </div>
   </div>
 
   <p class="section-title">Résumé</p>
@@ -359,18 +368,34 @@
 
 <script>
 const probMinEl = document.getElementById('probMin');
+const probMaxEl = document.getElementById('probMax');
 const daysMaxEl = document.getElementById('daysMax');
 const probMinOut = document.getElementById('probMinOut');
+const probMaxOut = document.getElementById('probMaxOut');
 const daysMaxOut = document.getElementById('daysMaxOut');
 const statusTxt = document.getElementById('statusTxt');
 const dot = document.getElementById('dot');
 const tableWrapper = document.getElementById('tableWrapper');
 const statsGrid = document.getElementById('statsGrid');
-
-probMinEl.addEventListener('input', () => { probMinOut.textContent = probMinEl.value + '%'; filterAndRender(); });
-daysMaxEl.addEventListener('input', () => { daysMaxOut.textContent = daysMaxEl.value + 'j'; filterAndRender(); });
+const pillsContainer = document.getElementById('pillsContainer');
 
 let allMarkets = [];
+let activeCategory = 'all';
+
+function clampSliders() {
+  const min = parseInt(probMinEl.value);
+  const max = parseInt(probMaxEl.value);
+  if (min >= max) {
+    if (this === probMinEl) probMaxEl.value = Math.min(100, min + 1);
+    else probMinEl.value = Math.max(50, max - 1);
+  }
+  probMinOut.textContent = probMinEl.value + '%';
+  probMaxOut.textContent = probMaxEl.value + '%';
+}
+
+probMinEl.addEventListener('input', () => { clampSliders.call(probMinEl); filterAndRender(); });
+probMaxEl.addEventListener('input', () => { clampSliders.call(probMaxEl); filterAndRender(); });
+daysMaxEl.addEventListener('input', () => { daysMaxOut.textContent = daysMaxEl.value + 'j'; filterAndRender(); });
 
 function edgeScore(prob, liquidity, daysLeft) {
   const liqPenalty = Math.min(liquidity, 50000) / 50000;
@@ -379,14 +404,41 @@ function edgeScore(prob, liquidity, daysLeft) {
   return Math.round(inefficiency * 100);
 }
 
+function buildCategoryPills(markets) {
+  const cats = [...new Set(markets.map(m => m.category).filter(Boolean))].sort();
+  const existing = [...pillsContainer.querySelectorAll('.pill')];
+  const existingCats = existing.filter(p => p.dataset.cat !== 'all').map(p => p.dataset.cat);
+  if (JSON.stringify(cats) === JSON.stringify(existingCats)) return;
+
+  pillsContainer.innerHTML = `<span class="pill active" data-cat="all">Tout</span>`;
+  cats.forEach(cat => {
+    const p = document.createElement('span');
+    p.className = 'pill';
+    p.dataset.cat = cat;
+    p.textContent = cat;
+    pillsContainer.appendChild(p);
+  });
+
+  pillsContainer.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      pillsContainer.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      activeCategory = p.dataset.cat;
+      filterAndRender();
+    });
+  });
+}
+
 function filterAndRender() {
   const pMin = parseFloat(probMinEl.value) / 100;
+  const pMax = parseFloat(probMaxEl.value) / 100;
   const dMax = parseInt(daysMaxEl.value);
   const now = Date.now();
 
   const filtered = allMarkets.filter(m => {
     const daysLeft = (m.endDate - now) / 86400000;
-    return m.bestProb >= pMin && daysLeft <= dMax && daysLeft >= 0;
+    const catOk = activeCategory === 'all' || m.category === activeCategory;
+    return m.bestProb >= pMin && m.bestProb <= pMax && daysLeft <= dMax && daysLeft >= 0 && catOk;
   }).map(m => {
     const daysLeft = (m.endDate - now) / 86400000;
     return { ...m, daysLeft, score: edgeScore(m.bestProb, m.liquidity, daysLeft) };
@@ -411,18 +463,18 @@ function filterAndRender() {
 
   const rows = filtered.slice(0, 40).map(m => {
     const probClass = m.bestProb >= 0.95 ? 'prob-high' : 'prob-mid';
-    const dStr = m.daysLeft < 1
-      ? `<${Math.round(m.daysLeft * 24)}h`
-      : m.daysLeft.toFixed(1) + 'j';
-    const liqStr = m.liquidity >= 1000
-      ? '$' + (m.liquidity / 1000).toFixed(1) + 'k'
-      : '$' + Math.round(m.liquidity);
-    const short = m.question.length > 72 ? m.question.slice(0, 69) + '...' : m.question;
+    const dStr = m.daysLeft < 1 ? `<${Math.round(m.daysLeft * 24)}h` : m.daysLeft.toFixed(1) + 'j';
+    const liqStr = m.liquidity >= 1000 ? '$' + (m.liquidity / 1000).toFixed(1) + 'k' : '$' + Math.round(m.liquidity);
+    const short = m.question.length > 65 ? m.question.slice(0, 62) + '...' : m.question;
     const badgeClass = m.score >= 80 ? 'badge-fort' : m.score >= 60 ? 'badge-moyen' : 'badge-faible';
     const badgeLabel = m.score >= 80 ? 'Fort' : m.score >= 60 ? 'Moyen' : 'Faible';
+    const catChip = m.category ? `<span class="cat-chip">${m.category}</span>` : '';
 
     return `<tr>
-      <td><a class="question-link" href="${m.url}" target="_blank" rel="noopener">${short}</a></td>
+      <td>
+        <a class="question-link" href="${m.url}" target="_blank" rel="noopener">${short}</a>
+        ${catChip ? `<div style="margin-top:4px">${catChip}</div>` : ''}
+      </td>
       <td><span class="prob-val ${probClass}">${(m.bestProb * 100).toFixed(1)}%</span></td>
       <td><span class="days-val">${dStr}</span></td>
       <td><span class="liq-val">${liqStr}</span></td>
@@ -461,16 +513,19 @@ async function loadMarkets() {
         const bestProb = Math.max(...prices.map(Number));
         const endDate = new Date(m.endDate).getTime();
         const liquidity = parseFloat(m.liquidity || 0);
+        const category = m.category || m.groupItemTitle || null;
         allMarkets.push({
           question: m.question,
           bestProb,
           endDate,
           liquidity,
+          category,
           url: `https://polymarket.com/market/${m.slug || m.id}`
         });
       } catch(e) {}
     }
 
+    buildCategoryPills(allMarkets);
     dot.classList.remove('off');
     statusTxt.textContent = `${allMarkets.length} marchés chargés — ${new Date().toLocaleTimeString('fr-CH')}`;
     filterAndRender();
