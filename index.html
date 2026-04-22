@@ -535,13 +535,7 @@ async function loadMarkets() {
         const bestProb = Math.max(...prices.map(Number));
         const endDate = new Date(m.endDate).getTime();
         const liquidity = parseFloat(m.liquidity || 0);
-        let tags = [];
-        try {
-          const raw = m.tags;
-          if (Array.isArray(raw)) tags = raw.map(t => t.label || t.slug || String(t)).filter(Boolean);
-          else if (typeof raw === 'string') tags = JSON.parse(raw).map(t => t.label || t.slug || String(t)).filter(Boolean);
-        } catch(e) {}
-        const category = tags.length ? tags[0] : null;
+        const category = (m._tags && m._tags.length) ? m._tags[0] : null;
         allMarkets.push({
           question: m.question,
           bestProb,
