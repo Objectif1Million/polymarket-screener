@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polymarket Screener</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --creme: #FFF9E9;
+    --noir: #161616;
+    --orange: #F95E01;
+    --jaune: #F9BA39;
+    --rose: #F585F1;
+    --ciel: #00A5FA;
+    --bleu: #2D5AFA;
+    --creme-dark: #EDE8D6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--creme);
+    color: var(--noir);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 2px solid var(--noir);
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--orange); }
+
+  .logo-sub {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--noir);
+    opacity: 0.5;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-left: 1rem;
+  }
+
+  .header-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    background: var(--noir);
+    color: var(--creme);
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  main { padding: 2.5rem; max-width: 1100px; margin: 0 auto; }
+
+  .section-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--noir);
+    opacity: 0.45;
+    margin-bottom: 1rem;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1.5rem;
+    align-items: end;
+    background: var(--creme-dark);
+    border: 1.5px solid var(--noir);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 640px) {
+    .controls { grid-template-columns: 1fr; }
+    header { padding: 1rem 1.25rem; }
+    main { padding: 1.25rem; }
+  }
+
+  .control-group label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    opacity: 0.6;
+  }
+
+  .range-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 2px;
+    background: var(--noir);
+    border-radius: 0;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--orange);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--noir);
+  }
+
+  .range-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-width: 42px;
+    text-align: right;
+  }
+
+  .refresh-btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--orange);
+    color: var(--creme);
+    border: 2px solid var(--noir);
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+  }
+
+  .refresh-btn:hover { background: var(--noir); }
+  .refresh-btn:active { transform: scale(0.97); }
+  .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    border: 1.5px solid var(--noir);
+    background: var(--noir);
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat-card {
+    background: var(--creme);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .stat-val {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .stat-val.accent { color: var(--orange); }
+
+  .status-bar {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--noir);
+    opacity: 0.5;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    animation: pulse 1.5s infinite;
+  }
+
+  .dot.off { background: #aaa; animation: none; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5px solid var(--noir);
+  }
+
+  thead tr {
+    background: var(--noir);
+    color: var(--creme);
+  }
+
+  thead th {
+    padding: 0.75rem 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: left;
+  }
+
+  thead th:not(:first-child) { text-align: center; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--creme-dark);
+    transition: background 0.1s;
+  }
+
+  tbody tr:hover { background: rgba(249,94,1,0.05); }
+
+  tbody td {
+    padding: 0.9rem 1rem;
+    font-size: 0.82rem;
+    vertical-align: middle;
+  }
+
+  tbody td:not(:first-child) { text-align: center; }
+
+  .question-link {
+    color: var(--noir);
+    text-decoration: none;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+
+  .question-link:hover { color: var(--bleu); }
+
+  .prob-val {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .prob-high { color: var(--orange); }
+  .prob-mid { color: var(--noir); }
+
+  .days-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+  }
+
+  .liq-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    opacity: 0.7;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  .badge-fort { background: var(--orange); color: var(--creme); }
+  .badge-moyen { background: var(--jaune); color: var(--noir); }
+  .badge-faible { background: var(--creme-dark); color: var(--noir); }
+
+  .empty-state {
+    padding: 3rem;
+    text-align: center;
+    border: 1.5px solid var(--creme-dark);
+    font-size: 0.9rem;
+    opacity: 0.5;
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding: 1.5rem 2.5rem;
+    border-top: 1.5px solid var(--creme-dark);
+    font-size: 0.7rem;
+    opacity: 0.4;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <span class="logo">Polymarket <span>Screener</span></span>
+  </div>
+  <span class="header-tag">Beta — données live</span>
+</header>
+
+<main>
+  <p class="section-title">Paramètres</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Probabilité minimum</label>
+      <div class="range-wrap">
+        <input type="range" id="probMin" min="80" max="99" value="90" step="1">
+        <span class="range-val" id="probMinOut">90%</span>
+      </div>
+    </div>
+    <div class="control-group">
+      <label>Maturité maximum</label>
+      <div class="range-wrap">
+        <input type="range" id="daysMax" min="1" max="14" value="7" step="1">
+        <span class="range-val" id="daysMaxOut">7j</span>
+      </div>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadMarkets()">Rafraîchir</button>
+  </div>
+
+  <p class="section-title">Résumé</p>
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><p class="stat-label">Marchés</p><p class="stat-val">—</p></div>
+    <div class="stat-card"><p class="stat-label">Prob. moy.</p><p class="stat-val">—</p></div>
+    <div class="stat-card"><p class="stat-label">Liquidité moy.</p><p class="stat-val">—</p></div>
+    <div class="stat-card"><p class="stat-label">Score moy.</p><p class="stat-val">—</p></div>
+  </div>
+
+  <p class="section-title">Marchés identifiés</p>
+  <div class="status-bar"><span class="dot off" id="dot"></span><span id="statusTxt">Chargement...</span></div>
+  <div id="tableWrapper"></div>
+</main>
+
+<footer>Données : Polymarket Gamma API — actualisation manuelle — usage informatif uniquement</footer>
+
+<script>
+const probMinEl = document.getElementById('probMin');
+const daysMaxEl = document.getElementById('daysMax');
+const probMinOut = document.getElementById('probMinOut');
+const daysMaxOut = document.getElementById('daysMaxOut');
+const statusTxt = document.getElementById('statusTxt');
+const dot = document.getElementById('dot');
+const tableWrapper = document.getElementById('tableWrapper');
+const statsGrid = document.getElementById('statsGrid');
+
+probMinEl.addEventListener('input', () => { probMinOut.textContent = probMinEl.value + '%'; filterAndRender(); });
+daysMaxEl.addEventListener('input', () => { daysMaxOut.textContent = daysMaxEl.value + 'j'; filterAndRender(); });
+
+let allMarkets = [];
+
+function edgeScore(prob, liquidity, daysLeft) {
+  const liqPenalty = Math.min(liquidity, 50000) / 50000;
+  const timeFactor = Math.max(0, 1 - daysLeft / 14);
+  const inefficiency = (1 - liqPenalty) * 0.5 + timeFactor * 0.2 + prob * 0.3;
+  return Math.round(inefficiency * 100);
+}
+
+function filterAndRender() {
+  const pMin = parseFloat(probMinEl.value) / 100;
+  const dMax = parseInt(daysMaxEl.value);
+  const now = Date.now();
+
+  const filtered = allMarkets.filter(m => {
+    const daysLeft = (m.endDate - now) / 86400000;
+    return m.bestProb >= pMin && daysLeft <= dMax && daysLeft >= 0;
+  }).map(m => {
+    const daysLeft = (m.endDate - now) / 86400000;
+    return { ...m, daysLeft, score: edgeScore(m.bestProb, m.liquidity, daysLeft) };
+  }).sort((a, b) => b.score - a.score);
+
+  const n = filtered.length;
+  const avgProb = n ? (filtered.reduce((s, m) => s + m.bestProb, 0) / n * 100).toFixed(1) + '%' : '—';
+  const avgLiq = n ? '$' + Math.round(filtered.reduce((s, m) => s + m.liquidity, 0) / n).toLocaleString('fr-CH') : '—';
+  const avgScore = n ? Math.round(filtered.reduce((s, m) => s + m.score, 0) / n) : '—';
+
+  statsGrid.innerHTML = [
+    { label: 'Marchés', val: n, accent: true },
+    { label: 'Prob. moy.', val: avgProb },
+    { label: 'Liquidité moy.', val: avgLiq },
+    { label: 'Score moy.', val: avgScore }
+  ].map(c => `<div class="stat-card"><p class="stat-label">${c.label}</p><p class="stat-val${c.accent ? ' accent' : ''}">${c.val}</p></div>`).join('');
+
+  if (!n) {
+    tableWrapper.innerHTML = '<div class="empty-state">Aucun marché ne correspond aux critères sélectionnés.</div>';
+    return;
+  }
+
+  const rows = filtered.slice(0, 40).map(m => {
+    const probClass = m.bestProb >= 0.95 ? 'prob-high' : 'prob-mid';
+    const dStr = m.daysLeft < 1
+      ? `<${Math.round(m.daysLeft * 24)}h`
+      : m.daysLeft.toFixed(1) + 'j';
+    const liqStr = m.liquidity >= 1000
+      ? '$' + (m.liquidity / 1000).toFixed(1) + 'k'
+      : '$' + Math.round(m.liquidity);
+    const short = m.question.length > 72 ? m.question.slice(0, 69) + '...' : m.question;
+    const badgeClass = m.score >= 80 ? 'badge-fort' : m.score >= 60 ? 'badge-moyen' : 'badge-faible';
+    const badgeLabel = m.score >= 80 ? 'Fort' : m.score >= 60 ? 'Moyen' : 'Faible';
+
+    return `<tr>
+      <td><a class="question-link" href="${m.url}" target="_blank" rel="noopener">${short}</a></td>
+      <td><span class="prob-val ${probClass}">${(m.bestProb * 100).toFixed(1)}%</span></td>
+      <td><span class="days-val">${dStr}</span></td>
+      <td><span class="liq-val">${liqStr}</span></td>
+      <td><span class="badge ${badgeClass}">${m.score} — ${badgeLabel}</span></td>
+    </tr>`;
+  }).join('');
+
+  tableWrapper.innerHTML = `<div style="overflow-x:auto"><table>
+    <thead><tr>
+      <th>Question</th>
+      <th>Prob.</th>
+      <th>Maturité</th>
+      <th>Liquidité</th>
+      <th>Score inefficience</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+async function loadMarkets() {
+  statusTxt.textContent = 'Connexion à Polymarket...';
+  dot.classList.add('off');
+  document.getElementById('refreshBtn').disabled = true;
+  tableWrapper.innerHTML = '';
+
+  try {
+    const res = await fetch('/api/markets');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    allMarkets = [];
+    for (const m of data) {
+      try {
+        const prices = JSON.parse(m.outcomePrices || '[]');
+        if (!prices.length || !m.endDate) continue;
+        const bestProb = Math.max(...prices.map(Number));
+        const endDate = new Date(m.endDate).getTime();
+        const liquidity = parseFloat(m.liquidity || 0);
+        allMarkets.push({
+          question: m.question,
+          bestProb,
+          endDate,
+          liquidity,
+          url: `https://polymarket.com/market/${m.slug || m.id}`
+        });
+      } catch(e) {}
+    }
+
+    dot.classList.remove('off');
+    statusTxt.textContent = `${allMarkets.length} marchés chargés — ${new Date().toLocaleTimeString('fr-CH')}`;
+    filterAndRender();
+  } catch(e) {
+    dot.classList.add('off');
+    statusTxt.textContent = 'Erreur : ' + e.message;
+  } finally {
+    document.getElementById('refreshBtn').disabled = false;
+  }
+}
+
+loadMarkets();
+</script>
+</body>
+</html>
